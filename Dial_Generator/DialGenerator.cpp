@@ -8,7 +8,7 @@
 #include <cassert>
 
 #include "Acronym_Generator/AcronymGenerator.h"
-#include "Word_Generation/WordGenerator.h"
+#include "Word_Generator/WordGenerator.h"
 
 #include "SVG/SVGElement.h"
 #include "SVG/SVGBuilder.h"
@@ -18,7 +18,7 @@
 
 #include "SVG/Transforms/Transforms.h"
 
-#include "DialGenerator.h"
+#include "Dial_Generator/DialGenerator.h"
 
 using namespace std;
 

@@ -9,7 +9,7 @@ SRC_DIR = .
 ACRONYM_DIR = Acronym_Generator
 DIAL_DIR = Dial_Generator
 SVG_DIR = SVG
-WORD_DIR = Word_Generation
+WORD_DIR = Word_Generator
 
 # Source Files
 SRC_FILES = $(SRC_DIR)/Synthetic.cpp \
@@ -26,7 +26,7 @@ SRC_FILES = $(SRC_DIR)/Synthetic.cpp \
 OBJ_FILES = $(SRC_FILES:.cpp=.o)
 
 # Executable
-EXEC = Synthetic
+EXEC = bin/Synthetic
 
 # Rules
 all: $(EXEC)

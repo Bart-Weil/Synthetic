@@ -7,7 +7,7 @@
 #include <fstream>
 #include <cassert>
 
-#include "Word_Generation/WordGenerator.h"
+#include "Word_Generator/WordGenerator.h"
 #include "Acronym_Generator/AcronymGenerator.h"
 
 using namespace std;
