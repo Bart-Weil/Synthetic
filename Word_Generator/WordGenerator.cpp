@@ -16,32 +16,32 @@
 #include <random>
 #include <iostream>
 #include <fstream> 
-using namespace std;
 
-#include "Word_Generation/WordGenerator.h"
+#include "Word_Generator/WordGenerator.h"
 
-string WordGenerator::generateWord(int length) {
+std::string WordGenerator::generateWord(int length) {
   if (length < tileSize) {
     return "";
   }
-  string word = "";
+  std::string word = "";
   while (word == "") {
     word = tryGenerateWord(length);
   }
   return word;
 }
 
-WordGenerator::WordGenerator(int tileSize, string corpusFile) {
+WordGenerator::WordGenerator(int tileSize, std::string corpusFile) {
   this->tileSize = tileSize;
   // read in corpus file to populate startChunks, endChunks, and chunks
-  ifstream corpus(corpusFile);
-  string line;
+  std::ifstream corpus(corpusFile);
+  std::string line;
   while (getline(corpus, line)) {
-    if (line.length() >= tileSize) {
+    int lineLength = static_cast<int>(line.length());
+    if (lineLength >= tileSize) {
       startChunks.insert(line.substr(0, tileSize));
       endChunks.insert(line.substr(line.length() - tileSize, tileSize));   
-      if (line.length() > tileSize) {
-        for (int pos = 1; pos < line.length() - tileSize - 1; ++pos) {
+      if (lineLength > tileSize) {
+        for (int pos = 1; pos < lineLength - tileSize - 1; ++pos) {
           chunks.insert(line.substr(pos, tileSize));
         }
       }
@@ -49,25 +49,25 @@ WordGenerator::WordGenerator(int tileSize, string corpusFile) {
   }
 }
 
-string WordGenerator::tryGenerateWord(int length) {
-  random_device rd;
-  mt19937 gen(rd());
-  uniform_int_distribution<> startDist(0, static_cast<int>(startChunks.size() - 1));
-  uniform_int_distribution<> chunkDist(0, static_cast<int>(chunks.size() - 1));
-  uniform_int_distribution<> endDist(0, static_cast<int>(endChunks.size() - 1));
+std::string WordGenerator::tryGenerateWord(int length) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> startDist(0, static_cast<int>(startChunks.size() - 1));
+  std::uniform_int_distribution<> chunkDist(0, static_cast<int>(chunks.size() - 1));
+  std::uniform_int_distribution<> endDist(0, static_cast<int>(endChunks.size() - 1));
 
-  string word = "";
-  string startChunk = *next(startChunks.begin(), startDist(gen));
+  std::string word = "";
+  std::string startChunk = *next(startChunks.begin(), startDist(gen));
   word += startChunk;
 
   if (length == tileSize) {
     return word;
   }
 
-  string *validChunks = new string[startChunks.size()];
+  std::string *validChunks = new std::string[startChunks.size()];
 
   for (int i = 0; i < length - 1 - tileSize; ++i) {
-    string nextChunk = "";
+    std::string nextChunk = "";
     int numValidChunks = 0;
     
     for (auto it = chunks.begin(); it != chunks.end(); ++it) {
@@ -76,7 +76,7 @@ string WordGenerator::tryGenerateWord(int length) {
       }
     }
 
-    uniform_int_distribution<> validDist(0, numValidChunks - 1);
+    std::uniform_int_distribution<> validDist(0, numValidChunks - 1);
 
     if (numValidChunks > 0) {
       nextChunk = validChunks[validDist(gen)];
@@ -89,7 +89,7 @@ string WordGenerator::tryGenerateWord(int length) {
       startChunk = nextChunk;
     }
   }
-  string endChunk = "";
+  std::string endChunk = "";
   for (auto it = endChunks.begin(); it != endChunks.end(); ++it) {
     if (it->substr(0, tileSize - 1) == startChunk.substr(1, tileSize - 1)) {
       endChunk = *it;

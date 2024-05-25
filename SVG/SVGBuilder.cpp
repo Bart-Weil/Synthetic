@@ -7,7 +7,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-using namespace std;
 
 SVGBuilder::SVGBuilder() {
   elements = std::vector<SVGElement *>();

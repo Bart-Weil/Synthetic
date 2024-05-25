@@ -1,16 +1,15 @@
 #ifndef ACRONYM_GENERATOR_H
 #define ACRONYM_GENERATOR_H
 
-#include <string>
 #include <random>
-using namespace std;
+#include <string>
 
 #define ALPHABET_SIZE 26
 
 class AcronymGenerator
 {
 private:
-  string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  std::string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   double probs[ALPHABET_SIZE] = {
     0.08167,
     0.01492,
@@ -40,7 +39,7 @@ private:
     0.00074
     };
 public:
-  string generateAcronym(int length, bool addDots);
+  std::string generateAcronym(int length, bool addDots);
 };
 
 #endif

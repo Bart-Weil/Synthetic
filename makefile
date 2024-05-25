@@ -17,6 +17,8 @@ SRC_FILES = $(SRC_DIR)/Synthetic.cpp \
             $(DIAL_DIR)/DialGenerator.cpp \
             $(SVG_DIR)/SVGBuilder.cpp \
 						$(SVG_DIR)/SVGElements/Rectangle.cpp \
+						$(SVG_DIR)/SVGElements/Header.cpp \
+						$(SVG_DIR)/SVGElements/Text.cpp \
 						$(SVG_DIR)/Transforms/Rotation.cpp \
 						$(SVG_DIR)/Transforms/Scale.cpp \
 						$(SVG_DIR)/Transforms/Translation.cpp \

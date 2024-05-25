@@ -11,16 +11,14 @@
 
 #include "SVG/Transform.h"
 
-using namespace std;
-
 class SVGElement {
 public:
-  string paramFormat(string arg) {
+  std::string paramFormat(std::string arg) {
     return "\"" + arg + "\"";
   }
 
-  string formatTransforms(vector<Transform *> transforms) {
-    string transformString = "transform=\"";
+  std::string formatTransforms(std::vector<Transform *> transforms) {
+    std::string transformString = "transform=\"";
     for (Transform *transform : transforms) {
       transformString += transform->format() + " ";
     }
@@ -28,7 +26,7 @@ public:
     return transformString;
   }
 
-  virtual string format() = 0;
+  virtual std::string format() = 0;
 };
 
 #endif

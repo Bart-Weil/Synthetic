@@ -14,7 +14,7 @@ Rotation::Rotation(double angle) {
 }
 
 string Rotation::format() {
-  return "rotate(" + to_string(angle) + ")";
+  return "rotate(" + std::to_string(angle) + ")";
 }
 
 #endif

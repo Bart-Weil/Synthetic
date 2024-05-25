@@ -7,14 +7,13 @@
 
 #include "SVG/Transforms/Transforms.h"
 
-using namespace std;
 
 Scale::Scale(double x, double y) {
     this->x = x;
     this->y = y;
 }
-string Scale::format() {
-  return "scale(" + to_string(x) + " " + to_string(y) + ")";
+std::string Scale::format() {
+  return "scale(" + std::to_string(x) + " " + std::to_string(y) + ")";
 }
 
 #endif

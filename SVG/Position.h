@@ -7,8 +7,6 @@
 
 #include "SVG/SVGElement.h"
 
-using namespace std;
-
 class Position : public SVGElement {
 public:
   double x;
@@ -17,9 +15,9 @@ public:
     this->x = x;
     this->y = y;
   }
-  string format() {
-    return string("x=") + paramFormat(to_string(x)) + " " + 
-      "y=" + paramFormat(to_string(y));
+  std::string format() {
+    return std::string("x=") + paramFormat(std::to_string(x)) + " " + 
+      "y=" + paramFormat(std::to_string(y));
   }
 };
 

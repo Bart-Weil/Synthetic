@@ -20,32 +20,30 @@
 
 #include "Dial_Generator/DialGenerator.h"
 
-using namespace std;
-
-void DialGenerator::startKnobFile(ofstream &knobStream) {
-  knobStream << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000\" height=\"1000\">" << endl;
+void DialGenerator::startKnobFile(std::ofstream &knobStream) {
+  knobStream << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000\" height=\"1000\">" << std::endl;
 }
 
-void DialGenerator::drawKnob(ofstream &knobStream) {
+void DialGenerator::drawKnob(std::ofstream &knobStream) {
   // write knob file, black filled circle with radius size-30, smaller white 
   // white filled circle with radius 2 at top of knob
-  knobStream << "<circle cx=\"500\" cy=\"500\" r=\"" << dialSize-30 << "\" stroke=\"black\" stroke-width=\"3\" fill=\"white\" />" << endl;
-  knobStream << "<circle cx=\"500\" cy=\"" << (500 - (dialSize-30) + 8) << "\" r=\"4\" stroke=\"black\" stroke-width=\"0\" fill=\"black\" />" << endl;
+  knobStream << "<circle cx=\"500\" cy=\"500\" r=\"" << dialSize-30 << "\" stroke=\"black\" stroke-width=\"3\" fill=\"white\" />" << std::endl;
+  knobStream << "<circle cx=\"500\" cy=\"" << (500 - (dialSize-30) + 8) << "\" r=\"4\" stroke=\"black\" stroke-width=\"0\" fill=\"black\" />" << std::endl;
 }
 
-void DialGenerator::endKnobFile(ofstream &knobStream) {
-  knobStream << "</svg>" << endl;
+void DialGenerator::endKnobFile(std::ofstream &knobStream) {
+  knobStream << "</svg>" << std::endl;
 }
 
-void DialGenerator::startBgFile(ofstream &bgStream) {
-  bgStream << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000\" height=\"1000\">" << endl;
+void DialGenerator::startBgFile(std::ofstream &bgStream) {
+  bgStream << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000\" height=\"1000\">" << std::endl;
 }
 
-void DialGenerator::drawBorder(ofstream &bgStream) {
-  bgStream << "<circle cx=\"500\" cy=\"500\" r=\"" << dialSize - 20 << "\" stroke=\"black\" stroke-width=\"2\" fill=\"transparent\" />" << endl;
+void DialGenerator::drawBorder(std::ofstream &bgStream) {
+  bgStream << "<circle cx=\"500\" cy=\"500\" r=\"" << dialSize - 20 << "\" stroke=\"black\" stroke-width=\"2\" fill=\"transparent\" />" << std::endl;
 }
 
-void DialGenerator::drawSmallDivs(ofstream &bgStream, bool isDiscrete, int blankAngle, int smallDivs, int largeDivs) {
+void DialGenerator::drawSmallDivs(std::ofstream &bgStream, bool isDiscrete, int blankAngle, int smallDivs, int largeDivs) {
   const float incrementLarge = (360-blankAngle) / (largeDivs-1);
   const float initialAngleLarge = (blankAngle/2);
 
@@ -55,56 +53,56 @@ void DialGenerator::drawSmallDivs(ofstream &bgStream, bool isDiscrete, int blank
     const float initialAngleSmall = initialAngleLarge + incrementSmall;
     for (int div=0; div<largeDivs-1; ++div) {
       for (int subDiv=0; subDiv<smallDivs; ++subDiv) {
-        vector<Transform*> transforms;
+        std::vector<Transform*> transforms;
         transforms.push_back(new Translation(500, 500));
         transforms.push_back(new Rotation(initialAngleSmall + div*incrementLarge + subDiv*incrementSmall));
         transforms.push_back(new Translation(0, dialSize-20));
-        bgStream << Rectangle(-1, 0, 2, smallDivSize, "black", transforms).format() << endl;
+        bgStream << Rectangle(-1, 0, 2, smallDivSize, "black", transforms).format() << std::endl;
         // bgStream << "<rect x=\"-1\" y=\"0\" width=\"2\" height=\"" << smallDivSize << "\" fill=\"black\" transform=\"translate(500 500) " <<
-        // "rotate(" << initialAngleSmall + div*incrementLarge + subDiv*incrementSmall << ")" << " translate(0 " << dialSize-20 << ")\"/>" << endl;
+        // "rotate(" << initialAngleSmall + div*incrementLarge + subDiv*incrementSmall << ")" << " translate(0 " << dialSize-20 << ")\"/>" << std::endl;
       }
     }
   }
 }
 
-void DialGenerator::drawLargeDivs(ofstream &bgStream, bool isDiscrete, int blankAngle, int largeDivs) {
+void DialGenerator::drawLargeDivs(std::ofstream &bgStream, bool isDiscrete, int blankAngle, int largeDivs) {
   // write large divisions
   const float incrementLarge = (360-blankAngle) / (largeDivs-1);
   const float initialAngleLarge = (blankAngle/2);
   for (int div=0; div<largeDivs; ++div) {
-    vector<Transform*> transforms;
+    std::vector<Transform*> transforms;
     transforms.push_back(new Translation(500, 500));
     transforms.push_back(new Rotation(initialAngleLarge + div*incrementLarge));
     transforms.push_back(new Translation(0, dialSize-20));
-    bgStream << Rectangle(-1, 0, 2, largeDivSize, "black", transforms).format() << endl;
+    bgStream << Rectangle(-1, 0, 2, largeDivSize, "black", transforms).format() << std::endl;
     // bgStream << "<rect x=\"-1\" y=\"0\" width=\"2\" height=\"" << largeDivSize << "\" fill=\"black\" transform=\"translate(500 500) " <<
-    // "rotate(" << initialAngleLarge + div*incrementLarge << ")" << " translate(0 " << dialSize-20 << ")\"/>" << endl;
+    // "rotate(" << initialAngleLarge + div*incrementLarge << ")" << " translate(0 " << dialSize-20 << ")\"/>" << std::endl;
   }
 }
 
-void DialGenerator::drawDialLabel(ofstream &bgStream, string name) {
+void DialGenerator::drawDialLabel(std::ofstream &bgStream, std::string name) {
   // write labels
-  bgStream << "<text x=\"500\" y=\"" << 500 + dialSize + 10 << "\" font-family=\"Arial\" font-size=\"20\" font-weight=\"600\" text-anchor=\"middle\">" << name << "</text>" << endl;
+  bgStream << "<text x=\"500\" y=\"" << 500 + dialSize + 10 << "\" font-family=\"Arial\" font-size=\"20\" font-weight=\"600\" text-anchor=\"middle\">" << name << "</text>" << std::endl;
 }
 
-string DialGenerator::incToString(int inc, int order, string unitString) {
-  string resultValue, resultSuffix;
+std::string DialGenerator::incToString(int inc, int order, std::string unitString) {
+  std::string resultValue, resultSuffix;
   if (abs(order) > 3) {
     int exponent = static_cast<int>(floor(log10(inc > 0 ? inc : 1)));
-    string orderString = "E" + to_string(order + exponent);
-    resultValue = to_string(inc * pow(10, -exponent));
+    std::string orderString = "E" + std::to_string(order + exponent);
+    resultValue = std::to_string(inc * pow(10, -exponent));
     resultSuffix = orderString + " " + unitString;
 
   } else {
-    resultValue = to_string(inc * pow(10, order));
+    resultValue = std::to_string(inc * pow(10, order));
     resultSuffix = " " + unitString;
   }
-  return resultValue.erase(resultValue.find_last_not_of("0")+2, string::npos) + resultSuffix;
+  return resultValue.erase(resultValue.find_last_not_of("0")+2, std::string::npos) + resultSuffix;
 }
 
-void DialGenerator::drawDivLabels(ofstream &bgStream, bool isDiscrete, int largeDivs, float initialAngleLarge, float incrementLarge) {
+void DialGenerator::drawDivLabels(std::ofstream &bgStream, bool isDiscrete, int largeDivs, float initialAngleLarge, float incrementLarge) {
   int acronymLength = distributions->acronymLengthDist(gen);
-  string unitString = generators->AcronymGen.generateAcronym(acronymLength, false);
+  std::string unitString = generators->AcronymGen.generateAcronym(acronymLength, false);
   for (int i=0; i<acronymLength; ++i) {
     unitString[i] = distributions->lowercaseDist(gen) ? tolower(unitString[i]) : unitString[i];
   }
@@ -112,7 +110,7 @@ void DialGenerator::drawDivLabels(ofstream &bgStream, bool isDiscrete, int large
   int unitOrder = distributions->unitOrderDist(gen);
 
   for (int div=0; div<largeDivs; ++div) {
-    string anchor;
+    std::string anchor;
     float divProgress = static_cast<float>(div)/(largeDivs-1);
     if (divProgress == 0.5) {
       anchor = "middle";
@@ -121,7 +119,7 @@ void DialGenerator::drawDivLabels(ofstream &bgStream, bool isDiscrete, int large
     } else {
       anchor = "start";
     }
-    string word;
+    std::string word;
     if (isDiscrete) {
       word = generators->WordGen.generateWord(distributions->wordLengthDist(gen));
     } else {
@@ -136,11 +134,11 @@ void DialGenerator::drawDivLabels(ofstream &bgStream, bool isDiscrete, int large
   }
 }
 
-void DialGenerator::endBgFile(ofstream &bgStream) {
-  bgStream << "</svg>" << endl;
+void DialGenerator::endBgFile(std::ofstream &bgStream) {
+  bgStream << "</svg>" << std::endl;
 }
 
-void DialGenerator::generateDial(string bgName, string knobName) {
+void DialGenerator::generateDial(std::string bgName, std::string knobName) {
   assert(LargeDivs.min_val >= 2);
 
   bool isDiscrete = distributions->discreteDist(gen)==1;
@@ -151,14 +149,14 @@ void DialGenerator::generateDial(string bgName, string knobName) {
   int largeDivs = distributions->largeDivDist(gen);
   // ensure largeDivs are not too crowded
   if (largeDivs > 4) {
-    blankAngle = min(blankAngle, 180);
+    blankAngle = std::min(blankAngle, 180);
   }
   int smallDivs = distributions->smallDivDist(gen);
 
   // open streams for writing bg and knob files
-  ofstream knobStream;
+  std::ofstream knobStream;
   knobStream.open(knobName);
-  ofstream bgStream;
+  std::ofstream bgStream;
   bgStream.open(bgName);
 
   // write knob file
@@ -174,7 +172,7 @@ void DialGenerator::generateDial(string bgName, string knobName) {
 
   // place a generated word underneath the dial, first letter capitalised
   if (labelDial) {
-    string word = generators->WordGen.generateWord(distributions->wordLengthDist(gen));
+    std::string word = generators->WordGen.generateWord(distributions->wordLengthDist(gen));
     word[0] = toupper(word[0]);
     drawDialLabel(bgStream, word);
   }
@@ -188,18 +186,18 @@ void DialGenerator::generateDial(string bgName, string knobName) {
   bgStream.close();
 
   // write the svg files centered on each other, centered in an html file. scaled as to avoid cropping
-  ofstream htmlFile;
+  std::ofstream htmlFile;
   htmlFile.open("dial.html");
-  htmlFile << "<!DOCTYPE html>" << endl;
-  htmlFile << "<html>" << endl;
-  htmlFile << "<script src=\"writeDial.js\"></script>"  << endl;
-  htmlFile << "<body>" << endl;
-  htmlFile << "<div style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << endl;
-  htmlFile << "<img src=\"" << bgName << "\" style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << endl;
-  htmlFile << "<img src=\"" << knobName << "\" style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << endl;
-  htmlFile << "</div>" << endl;
-  htmlFile << "</body>" << endl;
-  htmlFile << "</html>" << endl;
+  htmlFile << "<!DOCTYPE html>" << std::endl;
+  htmlFile << "<html>" << std::endl;
+  htmlFile << "<script src=\"writeDial.js\"></script>"  << std::endl;
+  htmlFile << "<body>" << std::endl;
+  htmlFile << "<div style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << std::endl;
+  htmlFile << "<img src=\"" << bgName << "\" style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << std::endl;
+  htmlFile << "<img src=\"" << knobName << "\" style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << std::endl;
+  htmlFile << "</div>" << std::endl;
+  htmlFile << "</body>" << std::endl;
+  htmlFile << "</html>" << std::endl;
   htmlFile.close();
 }
 
@@ -215,17 +213,17 @@ DialGenerator::DialGenerator (
     labelDialProb(labelDialProb), dialSize(dialSize) {
 
   DialDistributions *distributions = new DialDistributions();
-  distributions->acronymLengthDist = uniform_int_distribution<>(minAcronymLength, maxAcronymLength);
-  distributions->blankAnglesIndexDist = uniform_int_distribution<>(0, numBlankAngles-1);
-  distributions->largeDivDist = uniform_int_distribution<>(LargeDivs.min_val, LargeDivs.max_val);
-  distributions->smallDivDist = uniform_int_distribution<>(SmallDivs.min_val, SmallDivs.max_val);
-  distributions->wordLengthDist = uniform_int_distribution<>(wordMinLength, wordMaxLength);
-  distributions->unitStartDist = uniform_int_distribution<>(digitMin, digitMax);
-  distributions->unitOrderDist = uniform_int_distribution<>(unitOrderMin, unitOrderMax);
-  distributions->discreteDist = bernoulli_distribution(discreteProb);
-  distributions->labelDivDist = bernoulli_distribution(labelDivProb);
-  distributions->labelDialDist = bernoulli_distribution(labelDialProb);
-  distributions->lowercaseDist = bernoulli_distribution(2.0f/(minAcronymLength+maxAcronymLength));
+  distributions->acronymLengthDist = std::uniform_int_distribution<>(minAcronymLength, maxAcronymLength);
+  distributions->blankAnglesIndexDist = std::uniform_int_distribution<>(0, numBlankAngles-1);
+  distributions->largeDivDist = std::uniform_int_distribution<>(LargeDivs.min_val, LargeDivs.max_val);
+  distributions->smallDivDist = std::uniform_int_distribution<>(SmallDivs.min_val, SmallDivs.max_val);
+  distributions->wordLengthDist = std::uniform_int_distribution<>(wordMinLength, wordMaxLength);
+  distributions->unitStartDist = std::uniform_int_distribution<>(digitMin, digitMax);
+  distributions->unitOrderDist = std::uniform_int_distribution<>(unitOrderMin, unitOrderMax);
+  distributions->discreteDist = std::bernoulli_distribution(discreteProb);
+  distributions->labelDivDist = std::bernoulli_distribution(labelDivProb);
+  distributions->labelDialDist = std::bernoulli_distribution(labelDialProb);
+  distributions->lowercaseDist = std::bernoulli_distribution(2.0f/(minAcronymLength+maxAcronymLength));
   this->distributions = distributions;
   
   this->generators = new ProcGenerators(

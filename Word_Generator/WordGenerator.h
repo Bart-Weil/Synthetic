@@ -3,18 +3,17 @@
 
 #include <string>
 #include <set>
-using namespace std;
 
 class WordGenerator
 {
 private:
   int tileSize;
-  std::set<string> startChunks;
-  std::set<string> endChunks;
-  std::set<string> chunks;
-  string tryGenerateWord(int length);
+  std::set<std::string> startChunks;
+  std::set<std::string> endChunks;
+  std::set<std::string> chunks;
+  std::string tryGenerateWord(int length);
 public:
-  WordGenerator(int tileSize, string corpusFile);
-  string generateWord(int length);
+  WordGenerator(int tileSize, std::string corpusFile);
+  std::string generateWord(int length);
 };
 #endif

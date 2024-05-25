@@ -10,15 +10,13 @@
 
 #include "AcronymGenerator.h"
 
-using namespace std;
-
 #define ALPHABET_SIZE 26
 
-string AcronymGenerator::generateAcronym(int length, bool addDots) {
-  random_device rd;
-  mt19937 gen(rd());
-  discrete_distribution<> letterDist(probs, probs + ALPHABET_SIZE);
-  string acronym = "";
+std::string AcronymGenerator::generateAcronym(int length, bool addDots) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::discrete_distribution<> letterDist(probs, probs + ALPHABET_SIZE);
+  std::string acronym = "";
   for (int i = 0; i < length; i++) {
     char letter = letters[letterDist(gen)];
     acronym += letter;
