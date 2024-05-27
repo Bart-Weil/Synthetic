@@ -11,7 +11,6 @@
 #include "Word_Generator/WordGenerator.h"
 
 #include "SVG/SVGElement.h"
-#include "SVG/SVGBuilder.h"
 #include "SVG/Position.h"
 
 #include "SVG/SVGElements/SVGElements.h"
@@ -20,30 +19,26 @@
 
 #include "Dial_Generator/DialGenerator.h"
 
-void DialGenerator::startKnobFile(std::ofstream &knobStream) {
-  knobStream << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000\" height=\"1000\">" << std::endl;
-}
-
-void DialGenerator::drawKnob(std::ofstream &knobStream) {
+void DialGenerator::drawKnob(std::unique_ptr<SVGDiv> &knobDiv) {
   // write knob file, black filled circle with radius size-30, smaller white 
   // white filled circle with radius 2 at top of knob
-  knobStream << "<circle cx=\"500\" cy=\"500\" r=\"" << dialSize-30 << "\" stroke=\"black\" stroke-width=\"3\" fill=\"white\" />" << std::endl;
-  knobStream << "<circle cx=\"500\" cy=\"" << (500 - (dialSize-30) + 8) << "\" r=\"4\" stroke=\"black\" stroke-width=\"0\" fill=\"black\" />" << std::endl;
+  std::cout << knobDiv->width << std::endl;
+  const int cx = (knobDiv->width)/2;
+  const int cy = (knobDiv->height)/2;
+  knobDiv->addElement(std::make_unique<Circle>(cx, cy, dialSize-30, "black", 3, "white",  std::vector<std::unique_ptr<Transform>>()));
+  knobDiv->addElement(std::make_unique<Circle>(cx, cy - (dialSize-30) + 8, 4, "black", 0, "black",  std::vector<std::unique_ptr<Transform>>()));
 }
 
-void DialGenerator::endKnobFile(std::ofstream &knobStream) {
-  knobStream << "</svg>" << std::endl;
+void DialGenerator::drawBorder(std::unique_ptr<SVGDiv> &bgDiv) {
+  const int cx = bgDiv->width/2;
+  const int cy = bgDiv->height/2;
+  bgDiv->addElement(std::make_unique<Circle>(cx, cy, dialSize-20, "black", 2, "transparent",  std::vector<std::unique_ptr<Transform>>()));
 }
 
-void DialGenerator::startBgFile(std::ofstream &bgStream) {
-  bgStream << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000\" height=\"1000\">" << std::endl;
-}
-
-void DialGenerator::drawBorder(std::ofstream &bgStream) {
-  bgStream << "<circle cx=\"500\" cy=\"500\" r=\"" << dialSize - 20 << "\" stroke=\"black\" stroke-width=\"2\" fill=\"transparent\" />" << std::endl;
-}
-
-void DialGenerator::drawSmallDivs(std::ofstream &bgStream, bool isDiscrete, int blankAngle, int smallDivs, int largeDivs) {
+void DialGenerator::drawSmallDivs(std::unique_ptr<SVGDiv> &bgDiv, bool isDiscrete, int blankAngle, int smallDivs, int largeDivs) {
+  const int cx = bgDiv->width/2;
+  const int cy = bgDiv->height/2;
+  
   const float incrementLarge = (360-blankAngle) / (largeDivs-1);
   const float initialAngleLarge = (blankAngle/2);
 
@@ -53,36 +48,37 @@ void DialGenerator::drawSmallDivs(std::ofstream &bgStream, bool isDiscrete, int 
     const float initialAngleSmall = initialAngleLarge + incrementSmall;
     for (int div=0; div<largeDivs-1; ++div) {
       for (int subDiv=0; subDiv<smallDivs; ++subDiv) {
-        std::vector<Transform*> transforms;
-        transforms.push_back(new Translation(500, 500));
-        transforms.push_back(new Rotation(initialAngleSmall + div*incrementLarge + subDiv*incrementSmall));
-        transforms.push_back(new Translation(0, dialSize-20));
-        bgStream << Rectangle(-1, 0, 2, smallDivSize, "black", transforms).format() << std::endl;
-        // bgStream << "<rect x=\"-1\" y=\"0\" width=\"2\" height=\"" << smallDivSize << "\" fill=\"black\" transform=\"translate(500 500) " <<
-        // "rotate(" << initialAngleSmall + div*incrementLarge + subDiv*incrementSmall << ")" << " translate(0 " << dialSize-20 << ")\"/>" << std::endl;
+        std::vector<std::unique_ptr<Transform>> transforms;
+        transforms.push_back(std::make_unique<Translation>(cx, cy));
+        transforms.push_back(std::make_unique<Rotation>(initialAngleSmall + div*incrementLarge + subDiv*incrementSmall));
+        transforms.push_back(std::make_unique<Translation>(0, dialSize-20));
+        bgDiv->addElement(std::make_unique<Rectangle>(-1, 0, 2, smallDivSize, "black", std::move(transforms)));
       }
     }
   }
 }
 
-void DialGenerator::drawLargeDivs(std::ofstream &bgStream, bool isDiscrete, int blankAngle, int largeDivs) {
+void DialGenerator::drawLargeDivs(std::unique_ptr<SVGDiv> &bgDiv, bool isDiscrete, int blankAngle, int largeDivs) {
+  const int cx = bgDiv->width/2;
+  const int cy = bgDiv->height/2;
+  
   // write large divisions
   const float incrementLarge = (360-blankAngle) / (largeDivs-1);
   const float initialAngleLarge = (blankAngle/2);
   for (int div=0; div<largeDivs; ++div) {
-    std::vector<Transform*> transforms;
-    transforms.push_back(new Translation(500, 500));
-    transforms.push_back(new Rotation(initialAngleLarge + div*incrementLarge));
-    transforms.push_back(new Translation(0, dialSize-20));
-    bgStream << Rectangle(-1, 0, 2, largeDivSize, "black", transforms).format() << std::endl;
-    // bgStream << "<rect x=\"-1\" y=\"0\" width=\"2\" height=\"" << largeDivSize << "\" fill=\"black\" transform=\"translate(500 500) " <<
-    // "rotate(" << initialAngleLarge + div*incrementLarge << ")" << " translate(0 " << dialSize-20 << ")\"/>" << std::endl;
+    std::vector<std::unique_ptr<Transform>> transforms;
+    transforms.push_back(std::make_unique<Translation>(cx, cy));
+    transforms.push_back(std::make_unique<Rotation>(initialAngleLarge + div*incrementLarge));
+    transforms.push_back(std::make_unique<Translation>(0, dialSize-20));
+    bgDiv->addElement(std::make_unique<Rectangle>(-1, 0, 2, largeDivSize, "black", std::move(transforms)));
   }
 }
 
-void DialGenerator::drawDialLabel(std::ofstream &bgStream, std::string name) {
+void DialGenerator::drawDialLabel(std::unique_ptr<SVGDiv> &bgDiv, std::string name) {
+  const int cx = bgDiv->width/2;
+  const int cy = bgDiv->height/2;
   // write labels
-  bgStream << "<text x=\"500\" y=\"" << 500 + dialSize + 10 << "\" font-family=\"Arial\" font-size=\"20\" font-weight=\"600\" text-anchor=\"middle\">" << name << "</text>" << std::endl;
+  bgDiv->addElement(std::make_unique<Text>(cx, cy + dialSize + 10, "Arial", 20, 600, "middle", std::vector<std::unique_ptr<Transform>>(), name));
 }
 
 std::string DialGenerator::incToString(int inc, int order, std::string unitString) {
@@ -100,7 +96,10 @@ std::string DialGenerator::incToString(int inc, int order, std::string unitStrin
   return resultValue.erase(resultValue.find_last_not_of("0")+2, std::string::npos) + resultSuffix;
 }
 
-void DialGenerator::drawDivLabels(std::ofstream &bgStream, bool isDiscrete, int largeDivs, float initialAngleLarge, float incrementLarge) {
+void DialGenerator::drawDivLabels(std::unique_ptr<SVGDiv> &bgDiv, bool isDiscrete, int largeDivs, float initialAngleLarge, float incrementLarge) {
+  const int cx = bgDiv->width/2;
+  const int cy = bgDiv->height/2;
+  
   int acronymLength = distributions->acronymLengthDist(gen);
   std::string unitString = generators->AcronymGen.generateAcronym(acronymLength, false);
   for (int i=0; i<acronymLength; ++i) {
@@ -126,19 +125,17 @@ void DialGenerator::drawDivLabels(std::ofstream &bgStream, bool isDiscrete, int 
       word = incToString(unitStart+div, unitOrder, unitString);
     }
 
-    bgStream << "<text x=\"0\" y=\"0\" font-family=\"Arial\" font-size=\"12\" font-weight=\"600\" "
-    << "text-anchor=\"" << anchor << "\" transform=\"translate(500, 500) "
-    << "rotate(" << initialAngleLarge + div*incrementLarge << ") translate(0 " << dialSize-(15-largeDivSize) << " )"
-    << "rotate(" << -(initialAngleLarge + div*incrementLarge) << ")\">"
-    << word << "</text>" << std::endl;
+    std::vector<std::unique_ptr<Transform>> transforms;
+    transforms.push_back(std::make_unique<Translation>(cx, cy));
+    transforms.push_back(std::make_unique<Rotation>(initialAngleLarge + div*incrementLarge));
+    transforms.push_back(std::make_unique<Translation>(0, dialSize-(15-largeDivSize)));
+    transforms.push_back(std::make_unique<Rotation>(-(initialAngleLarge+div*incrementLarge)));
+
+    bgDiv->addElement(std::make_unique<Text>(0, 0, "Arial", 12, 600, anchor, std::move(transforms), word));
   }
 }
 
-void DialGenerator::endBgFile(std::ofstream &bgStream) {
-  bgStream << "</svg>" << std::endl;
-}
-
-void DialGenerator::generateDial(std::string bgName, std::string knobName) {
+std::pair<std::unique_ptr<SVGElement>, std::unique_ptr<SVGElement>> DialGenerator::generateDial() {
   assert(LargeDivs.min_val >= 2);
 
   bool isDiscrete = distributions->discreteDist(gen)==1;
@@ -153,52 +150,29 @@ void DialGenerator::generateDial(std::string bgName, std::string knobName) {
   }
   int smallDivs = distributions->smallDivDist(gen);
 
-  // open streams for writing bg and knob files
-  std::ofstream knobStream;
-  knobStream.open(knobName);
-  std::ofstream bgStream;
-  bgStream.open(bgName);
+  auto knobDiv = std::make_unique<SVGDiv>(1000, 1000, std::move(std::vector<std::unique_ptr<SVGElement>>()));
+  auto bgDiv = std::make_unique<SVGDiv>(1000, 1000, std::move(std::vector<std::unique_ptr<SVGElement>>()));
 
   // write knob file
-  startKnobFile(knobStream);
-  drawKnob(knobStream);
-  endKnobFile(knobStream);
+  drawKnob(knobDiv);
 
   // write background file, black circle with radius dialSize - 20, transparent fill, black stroke
-  startBgFile(bgStream);
-  drawBorder(bgStream);
-  drawLargeDivs(bgStream, isDiscrete, blankAngle, largeDivs);
-  drawSmallDivs(bgStream, isDiscrete, blankAngle, smallDivs, largeDivs);
+  drawBorder(bgDiv);
+  drawLargeDivs(bgDiv, isDiscrete, blankAngle, largeDivs);
+  drawSmallDivs(bgDiv, isDiscrete, blankAngle, smallDivs, largeDivs);
 
   // place a generated word underneath the dial, first letter capitalised
   if (labelDial) {
     std::string word = generators->WordGen.generateWord(distributions->wordLengthDist(gen));
     word[0] = toupper(word[0]);
-    drawDialLabel(bgStream, word);
+    drawDialLabel(bgDiv, word);
   }
 
   if (labelDivs) {
-    drawDivLabels(bgStream, isDiscrete, largeDivs, blankAngle/2, (360-blankAngle)/(largeDivs-1));
+    drawDivLabels(bgDiv, isDiscrete, largeDivs, blankAngle/2, (360-blankAngle)/(largeDivs-1));
   }
 
-  endBgFile(bgStream);
-
-  bgStream.close();
-
-  // write the svg files centered on each other, centered in an html file. scaled as to avoid cropping
-  std::ofstream htmlFile;
-  htmlFile.open("dial.html");
-  htmlFile << "<!DOCTYPE html>" << std::endl;
-  htmlFile << "<html>" << std::endl;
-  htmlFile << "<script src=\"writeDial.js\"></script>"  << std::endl;
-  htmlFile << "<body>" << std::endl;
-  htmlFile << "<div style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << std::endl;
-  htmlFile << "<img src=\"" << bgName << "\" style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << std::endl;
-  htmlFile << "<img src=\"" << knobName << "\" style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << std::endl;
-  htmlFile << "</div>" << std::endl;
-  htmlFile << "</body>" << std::endl;
-  htmlFile << "</html>" << std::endl;
-  htmlFile.close();
+  return std::make_pair(std::move(knobDiv), std::move(bgDiv));
 }
 
 DialGenerator::DialGenerator (
@@ -212,7 +186,7 @@ DialGenerator::DialGenerator (
     discreteProb(discreteProb), labelDivProb(labelDivProb),
     labelDialProb(labelDialProb), dialSize(dialSize) {
 
-  DialDistributions *distributions = new DialDistributions();
+  this->distributions = std::make_unique<DialDistributions>();
   distributions->acronymLengthDist = std::uniform_int_distribution<>(minAcronymLength, maxAcronymLength);
   distributions->blankAnglesIndexDist = std::uniform_int_distribution<>(0, numBlankAngles-1);
   distributions->largeDivDist = std::uniform_int_distribution<>(LargeDivs.min_val, LargeDivs.max_val);
@@ -224,9 +198,8 @@ DialGenerator::DialGenerator (
   distributions->labelDivDist = std::bernoulli_distribution(labelDivProb);
   distributions->labelDialDist = std::bernoulli_distribution(labelDialProb);
   distributions->lowercaseDist = std::bernoulli_distribution(2.0f/(minAcronymLength+maxAcronymLength));
-  this->distributions = distributions;
   
-  this->generators = new ProcGenerators(
+  this->generators = std::make_unique<ProcGenerators>(
     WordGenerator(4, "Dial_Generator/corpus.txt"),
     AcronymGenerator()
   );
@@ -244,7 +217,37 @@ int main() {
     LargeDivs,
     SmallDivs
   );
-  dialGenerator.generateDial("bg.svg", "knob.svg");
+  auto [knob, dial] = dialGenerator.generateDial();
+
+  std::string bgName = "dial.svg";
+  std::string knobName = "knob.svg";
+  
+
+  // write the svg files
+  std::ofstream bgFile;
+  bgFile.open(bgName);
+  bgFile << dial->format();
+  bgFile.close();
+
+  std::ofstream knobFile;
+  knobFile.open(knobName);
+  knobFile << knob->format();
+  knobFile.close();
+
+  // write the svg files centered on each other, centered in an html file. scaled as to avoid cropping
+  std::ofstream htmlFile;
+  htmlFile.open("dial.html");
+  htmlFile << "<!DOCTYPE html>" << std::endl;
+  htmlFile << "<html>" << std::endl;
+  htmlFile << "<script src=\"writeDial.js\"></script>"  << std::endl;
+  htmlFile << "<body>" << std::endl;
+  htmlFile << "<div style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << std::endl;
+  htmlFile << "<img src=\"" << bgName << "\" style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << std::endl;
+  htmlFile << "<img src=\"" << knobName << "\" style=\"position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\">" << std::endl;
+  htmlFile << "</div>" << std::endl;
+  htmlFile << "</body>" << std::endl;
+  htmlFile << "</html>" << std::endl;
+  htmlFile.close();
 
   return 0;
 }

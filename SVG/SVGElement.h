@@ -17,13 +17,12 @@ public:
     return "\"" + arg + "\"";
   }
 
-  std::string formatTransforms(std::vector<Transform *> transforms) {
-    std::string transformString = "transform=\"";
-    for (Transform *transform : transforms) {
+  std::string formatTransforms(std::vector<std::unique_ptr<Transform>> &transforms) {
+    std::string transformString;
+    for (const auto &transform : transforms) {
       transformString += transform->format() + " ";
     }
-    transformString += "\"";
-    return transformString;
+    return "transform=" + paramFormat(transformString);
   }
 
   virtual std::string format() = 0;

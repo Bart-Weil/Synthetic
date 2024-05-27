@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <vector>
 
 #include "Word_Generator/WordGenerator.h"
 #include "Acronym_Generator/AcronymGenerator.h"
@@ -93,20 +94,16 @@ private:
   const int minAcronymLength = 1;
   const int maxAcronymLength = 3;
 
-  DialDistributions *distributions;
-  ProcGenerators *generators;
+  std::unique_ptr<DialDistributions> distributions;
+  std::unique_ptr<ProcGenerators> generators;
   
-  void startKnobFile(std::ofstream &knobStream);
-  void drawKnob(std::ofstream &knobStream);
-  void endKnobFile(std::ofstream &knobStream);
+  void drawKnob(std::unique_ptr<SVGDiv> &knobDiv);
 
-  void startBgFile(std::ofstream &bgStream);
-  void drawBorder(std::ofstream &bgStream);
-  void drawSmallDivs(std::ofstream &bgStream, bool isDiscrete, int blankAngle, int smallDivs, int largeDivs);
-  void drawLargeDivs(std::ofstream &bgStream, bool isDiscrete, int blankAngle, int smallDivs);
-  void drawDialLabel(std::ofstream &bgStream, std::string name);
-  void drawDivLabels(std::ofstream &bgStream, bool isDiscrete, int largeDivs, float initialAngleLarge, float incrementLarge);
-  void endBgFile(std::ofstream &bgStream);
+  void drawBorder(std::unique_ptr<SVGDiv> &bgDiv);
+  void drawSmallDivs(std::unique_ptr<SVGDiv> &bgDiv, bool isDiscrete, int blankAngle, int smallDivs, int largeDivs);
+  void drawLargeDivs(std::unique_ptr<SVGDiv> &bgDiv, bool isDiscrete, int blankAngle, int smallDivs);
+  void drawDialLabel(std::unique_ptr<SVGDiv> &bgDiv, std::string name);
+  void drawDivLabels(std::unique_ptr<SVGDiv> &bgDiv, bool isDiscrete, int largeDivs, float initialAngleLarge, float incrementLarge);
 
   std::string incToString(int inc, int order, std::string unitString);
 public:
@@ -118,13 +115,8 @@ public:
     ParamRange &LargeDivs,
     ParamRange &SmallDivs
   );
-
-  ~DialGenerator() {
-    delete distributions;
-    delete generators;
-  }
   
-  void generateDial(std::string bgName, std::string knobName);
+  std::pair<std::unique_ptr<SVGElement>, std::unique_ptr<SVGElement>> generateDial();
 };
 
 #endif

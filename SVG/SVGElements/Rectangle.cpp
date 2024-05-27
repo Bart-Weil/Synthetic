@@ -8,14 +8,13 @@
 
 #include "SVG/SVGElements/SVGElements.h"
 
-Rectangle::Rectangle(double x, double y, double width, double height, std::string fill = "black", std::vector<Transform*> transforms = {}) {
-  this->x = x;
-  this->y = y;
-  this->width = width;
-  this->height = height;
-  this->fill = fill;
-  this->transforms = transforms;
-}
+Rectangle::Rectangle(double x, double y, double width, double height, std::string fill, std::vector<std::unique_ptr<Transform>> transforms):
+    x(x),
+    y(y),
+    width(width),
+    height(height),
+    fill(fill),
+    transforms(std::move(transforms)) {}
 
 std::string Rectangle::format() {
   return "<rect " + 

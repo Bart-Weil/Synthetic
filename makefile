@@ -2,7 +2,7 @@
 CXX = g++
 
 # Compiler Flags
-CXXFLAGS = -Wall -std=c++11 -I.
+CXXFLAGS = -Wall -std=c++17 -I.
 
 # Directories
 SRC_DIR = .
@@ -15,10 +15,10 @@ WORD_DIR = Word_Generator
 SRC_FILES = $(SRC_DIR)/Synthetic.cpp \
             $(ACRONYM_DIR)/AcronymGenerator.cpp \
             $(DIAL_DIR)/DialGenerator.cpp \
-            $(SVG_DIR)/SVGBuilder.cpp \
 						$(SVG_DIR)/SVGElements/Rectangle.cpp \
-						$(SVG_DIR)/SVGElements/Header.cpp \
+						$(SVG_DIR)/SVGElements/SVGDiv.cpp \
 						$(SVG_DIR)/SVGElements/Text.cpp \
+						$(SVG_DIR)/SVGElements/Circle.cpp \
 						$(SVG_DIR)/Transforms/Rotation.cpp \
 						$(SVG_DIR)/Transforms/Scale.cpp \
 						$(SVG_DIR)/Transforms/Translation.cpp \
